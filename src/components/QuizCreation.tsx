@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardDescription, CardHeader, CardTitle } from './ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 
 type Props = {}
 
@@ -11,6 +11,9 @@ const QuizCreation = (props: Props) => {
                 <CardTitle className='text-2x font-bold'>Create a Quiz</CardTitle>
                 <CardDescription> Choose  Topic</CardDescription>
             </CardHeader>
+            <CardContent>
+                
+            </CardContent>
         </Card>
     </div>
   )
