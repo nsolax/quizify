@@ -57,7 +57,6 @@ const QuizCreation = (props: Props) => {
   });
 
   function onSubmit(input: Input) {
-    // alert(JSON.stringify(input, null, 2));
     getQuestions(
       {
         amount: input.amount,
@@ -65,11 +64,12 @@ const QuizCreation = (props: Props) => {
         type: input.type,
       },
       {
-        onSuccess: ({gmaeId}) => {
+        onSuccess: ({gameId}) => {
           if (form.getValues("type") === "open_ended") {
-            router.push(`/play/open-ended${gmaeId}`);
+            console.log()
+            router.push(`/play/open-ended/${gameId}`);
           } else {
-            router.push(`/play/mcq/${gmaeId}`);
+            router.push(`/play/mcq/${gameId}`);
           }
         },
       }

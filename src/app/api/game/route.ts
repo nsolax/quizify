@@ -4,6 +4,7 @@ import { getAuthSession } from "@/lib/nextauth";
 import { NextResponse } from "next/server";
 import { quizCreationSchema } from "@/schemas/form/quiz";
 import axios from "axios";
+import {z} from "zod";
 
 export async function POST(req: Request, res: Response) {
   try {
@@ -16,7 +17,7 @@ export async function POST(req: Request, res: Response) {
     }
 
     const body = await req.json();
-    const { topic, type, amount } = quizCreationSchema.parse(body);
+    const {topic, amount, type} = quizCreationSchema.parse(body);
 
     const game = await prisma.game.create({
       data: {
@@ -28,7 +29,7 @@ export async function POST(req: Request, res: Response) {
     });
 
     const { data } = await axios.post(
-        `${process.env.API_URL}/api/questions`,
+        `${process.env.API_URL as string}/api/questions`,
         {
           amount,
           topic,
@@ -45,6 +46,7 @@ export async function POST(req: Request, res: Response) {
         option2: string;
         option3: string;
       };
+
       const manyData = data.questions.map((question: mcqQuestions) => {
         const options = [
           question.answer,
@@ -65,7 +67,6 @@ export async function POST(req: Request, res: Response) {
       await prisma.question.createMany({
         data: manyData,
       });
-
     } else if (type === "open_ended") {
       type openQuestion = {
         question: string;
@@ -82,10 +83,11 @@ export async function POST(req: Request, res: Response) {
         }),
       });
     }
+
     return NextResponse.json({ gameId: game.id }, { status: 200 });
   } catch (error) {
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.issues }, { status: 400 });
     }
     return NextResponse.json({
       error: "An unexpected error occurred.",
@@ -93,3 +95,4 @@ export async function POST(req: Request, res: Response) {
     { status: 500});
   }
 }
+ 
